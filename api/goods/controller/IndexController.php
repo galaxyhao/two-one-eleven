@@ -74,7 +74,6 @@ class IndexController extends RestUserBaseController
                 $data['isJoin'] = false;
             else
                 $data['isJoin'] = true;
-            $data['avatars'] = [];
             $data['avatars'] = $this->getGroupUsers($good_id);
             $data['tips'] = $this->getCurrentDiscount($data['rule'],count($data['avatars']));
         } catch (\Exception $e) {
@@ -84,6 +83,7 @@ class IndexController extends RestUserBaseController
     }
 
     private function getGroupUsers($good_id){
+        $avatars = [];
         try {
             $goods = GoodsModel::get($good_id);
             if (empty($goods))
