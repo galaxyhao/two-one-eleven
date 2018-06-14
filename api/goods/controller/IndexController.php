@@ -74,6 +74,7 @@ class IndexController extends RestUserBaseController
                 $data['isJoin'] = false;
             else
                 $data['isJoin'] = true;
+            $data['avatars'] = [];
             $data['avatars'] = $this->getGroupUsers($good_id);
             $data['tips'] = $this->getCurrentDiscount($data['rule'],count($data['avatars']));
         } catch (\Exception $e) {
@@ -102,14 +103,14 @@ class IndexController extends RestUserBaseController
         if($num < $rules[0]['num']){
             return "当前参团人数".$num."人,不足最低打折人数";
         }elseif ($num > $rules[$length-1]['num']){
-            return "已团".$num.',可打'.$rules[$length-1]['discount'].'折';
+            return "已团".$num.'人,可打'.$rules[$length-1]['discount'].'折';
         }else {
             foreach ($rules as $key => $r) {
                 if ($r['num'] > $num) {
                     break;
                 }
             }
-            return "已团".$num.',可打'.$rules[$key-1]['discount'].'折';
+            return "已团".$num.'人,可打'.$rules[$key-1]['discount'].'折';
         }
     }
 }
