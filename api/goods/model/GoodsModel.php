@@ -31,7 +31,7 @@ class GoodsModel extends Model
     }
 
     public function getBannerAttr($value){
-        return 'http://'.$_SERVER['HTTP_HOST'].DS.'upload'.DS.$value;
+        return 'https://'.$_SERVER['HTTP_HOST'].DS.'upload'.DS.$value;
     }
 
     public function setRuleAttr($value){
