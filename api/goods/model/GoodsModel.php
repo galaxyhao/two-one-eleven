@@ -14,7 +14,7 @@ class GoodsModel extends Model
     protected $autoWriteTimestamp = true;
 
     public function user(){
-        return $this->belongsToMany('User','goods_user');
+        return $this->belongsToMany('api\goods\model\UserModel','goods_user','user_id','goods_id');
     }
     public function getDeadline($goods_id){
         return self::where('id',$goods_id)->value('deadline');

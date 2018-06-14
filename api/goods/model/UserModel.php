@@ -9,7 +9,9 @@
 namespace api\goods\model;
 
 
-class UserModel
+use api\common\model\CommonModel;
+
+class UserModel extends CommonModel
 {
 
 }

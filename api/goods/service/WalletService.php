@@ -97,7 +97,7 @@ class WalletService
         }
         return true;
     }
-    protected function getBalance($user_id){
+    public function getBalance($user_id){
         return $this->walletModel->where('user_id',$user_id)->value('balance');
     }
 

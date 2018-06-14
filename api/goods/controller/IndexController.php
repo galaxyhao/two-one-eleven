@@ -10,6 +10,7 @@ namespace api\goods\controller;
 
 use api\goods\model\GoodsUserModel;
 use cmf\controller\RestUserBaseController;
+use think\exception\DbException;
 use think\Log;
 use think\Request;
 use api\goods\model\GoodsModel;
@@ -64,7 +65,7 @@ class IndexController extends RestUserBaseController
     public function goodsDetail(){
         $good_id = $this->request->param('goods_id');
         try {
-            $data = $this->goodsModel->where('id', $good_id)->field('id,title,banner,desc,amount,price')->find();
+            $data = $this->goodsModel->where('id', $good_id)->field('id,title,banner,desc,amount,price,rule')->find();
             $count = $this->goodsUserModel->where([
                 'goods_id' => $good_id,
                 'user_id'  => $this->getUserId()
@@ -73,9 +74,42 @@ class IndexController extends RestUserBaseController
                 $data['isJoin'] = false;
             else
                 $data['isJoin'] = true;
+            $data['avatars'] = $this->getGroupUsers();
+            $data['tips'] = $this->getCurrentDiscount($data['rule'],count($data['avatars']));
         } catch (\Exception $e) {
             $this->error($e->getMessage());
         }
         $this->success('获取成功',$data);
+    }
+
+    private function getGroupUsers(){
+        try {
+            $goods = GoodsModel::get(49);
+            if (empty($goods))
+                return [];
+            foreach ($goods->user as $user ){
+                $avatars[] = $user->avatar;
+            }
+            return $avatars;
+        } catch (DbException $e) {
+            return $e->getMessage().$e->getTraceAsString();
+            $this->error('数据库出错');
+        }
+    }
+    private function getCurrentDiscount($rule,$num){
+        $rules = json_decode($rule,true);
+        $length = count($rules);
+        if($num < $rules[0]['num']){
+            return "当前参团人数".$num."人,不足最低打折人数";
+        }elseif ($num > $rules[$length-1]['num']){
+            return "已团".$num.',可打'.$rules[$length-1]['discount'].'折';
+        }else {
+            foreach ($rules as $key => $r) {
+                if ($r['num'] > $num) {
+                    break;
+                }
+            }
+            return "已团".$num.',可打'.$rules[$key-1]['discount'].'折';
+        }
     }
 }
