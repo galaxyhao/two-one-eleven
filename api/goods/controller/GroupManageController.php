@@ -16,84 +16,60 @@ class GroupManageController extends RestUserBaseController
     public function myAllGroup()
     {
         $goods = $this->myGoods();
-        $mygoods = [];
-        $i =0;
         //时间戳判断
-        foreach ($goods as $key => $v) {
-            if ($v['deadline']<time()) {
-                $v['status'] = '已完成';
-            }else{
-                $v['status'] = '未完成';
-            }
-            $mygoods[$i]['goods_id'] = $v['goods_id'];
-            $mygoods[$i]['status'] = $v['status'];
-            $mygoods[$i]['title'] = $v['title'];
-            $mygoods[$i]['banner'] = $v['banner'];
-            $mygoods[$i]['price'] = $v['price'];
-            $i++;
-        }
-        $this->success($mygoods);
-    }
-    public function activeGroup()
-    {
-        $goods = $this->myGoods();
-        $mygoods = [];
-        $i =0;
-        foreach ($goods as $key => $v) {
-            if ($v['deadline']>time()) {
-                $mygoods[$i]['goods_id'] = $v['goods_id'];
-                $mygoods[$i]['title'] = $v['title'];
-                $mygoods[$i]['banner'] = $v['banner'];
-                $mygoods[$i]['price'] = $v['price'];
-            }
-            $i++;
-        }
-        $this->success($mygoods);
-    }
-    public function successGroup($value='')
-    {
-        $goods = $this->myGoods();
-        $mygoods = [];
-        $i =0;
-        foreach ($goods as $key => $v) {
-            if ($v['deadline']<time()) {
-                $mygoods[$i]['goods_id'] = $v['goods_id'];
-                $mygoods[$i]['title'] = $v['title'];
-                $mygoods[$i]['banner'] = $v['banner'];
-                $mygoods[$i]['price'] = $v['price'];
-            }
-            $i++;
-        }
-        $this->success($mygoods);
-    }
-    public function myCreateGroup()
-    {
-        $goods = $this->myGoods();
-        $mygoods = [];
-        $i =0;
         foreach ($goods as $key => $v) {
             if ($v['deadline']<time()) {
                 $v['status'] = '拼团成功';
             }else{
                 $v['status'] = '正在拼团';
             }
-            $mygoods[$i]['goods_id'] = $v['goods_id'];
-            $mygoods[$i]['status'] = $v['status'];
-            $mygoods[$i]['title'] = $v['title'];
-            $mygoods[$i]['banner'] = $v['banner'];
-            $mygoods[$i]['price'] = $v['price'];
-            $mygoods[$i]['deadline'] = $v['deadline'];
-            $i++;
+
+            $mygoods[] = $v;
         }
-        $this->success($mygoods);
+        //var_dump($mygoods);
+        $this->success('我的拼团记录！',$mygoods);
+    }
+    public function activeGroup()
+    {
+        $goods = $this->myGoods();
+        foreach ($goods as $key => $v) {
+            if ($v['deadline']>time()) {
+                $mygoods[] = $v;
+            }
+        }
+        $this->success('正在拼团！',$mygoods);
+    }
+    public function successGroup($value='')
+    {
+        $goods = $this->myGoods();
+        foreach ($goods as $key => $v) {
+            if ($v['deadline']<time()) {
+                $mygoods[] = $v;
+            }
+        }
+        $this->success('拼团成功！',$mygoods);
+    }
+    public function myCreateGroup()
+    {
+        $goods = $this->myGoods();
+        foreach ($goods as $key => $v) {
+            if ($v['deadline']<time()) {
+                $v['status'] = '拼团成功';
+            }else{
+                $v['status'] = '正在拼团';
+            }
+            $mygoods[] = $v;
+        }
+        $this->success('已发布的拼团！',$mygoods);
     }
     private function myGoods()
     {
+
         $user_id = $this->getUserId();
         $goodsUser = [];
         //获取用户拼团商品id
         $goodsUser = db('goods_user') ->where(['user_id'=>$user_id])->select();
-        if (empty($goodsUser)) {
+        if (!$goodsUser) {
             $this->success('还没有拼团哦！');
             exit();
         }

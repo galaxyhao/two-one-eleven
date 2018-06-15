@@ -43,7 +43,6 @@ class IndexController extends RestUserBaseController
     }
     public function addGoods(){
         $data = $this->request->param();
-        Log::info($data);
         if(empty($data)){
             $this->error('提交数据不能为空');
         }
